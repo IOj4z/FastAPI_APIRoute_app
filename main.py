@@ -1,7 +1,10 @@
 import uvicorn
 from fastapi import FastAPI, Depends
+
+import persons
 from albums import albums
 from books import books
+from persons import persons
 
 app = FastAPI()
 
@@ -24,6 +27,7 @@ async def root(day=Depends(dow)):
 
 app.mount("/albumapi", albums.albums)
 app.mount("/bookapi", books.books)
+app.mount("/personapi", persons.persons)
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8881, reload=True)
