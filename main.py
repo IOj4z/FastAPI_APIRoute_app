@@ -8,6 +8,12 @@ from persons import persons
 
 app = FastAPI()
 
+app.mount("/albumapi", albums.albums)
+app.mount("/bookapi", books.books)
+app.mount("/personapi", persons.persons)
+
+
+
 
 # app.include_router(books.books)
 # app.include_router(albums.albums)
@@ -24,10 +30,6 @@ async def root(day=Depends(dow)):
         return {"message": "Service not available on Sunday"}
     return {"message": "Home page"}
 
-
-app.mount("/albumapi", albums.albums)
-app.mount("/bookapi", books.books)
-app.mount("/personapi", persons.persons)
 
 if __name__ == '__main__':
     uvicorn.run("main:app", host="127.0.0.1", port=8881, reload=True)
