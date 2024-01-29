@@ -13,8 +13,6 @@ app.mount("/bookapi", books.books)
 app.mount("/personapi", persons.persons)
 
 
-
-
 # app.include_router(books.books)
 # app.include_router(albums.albums)
 
