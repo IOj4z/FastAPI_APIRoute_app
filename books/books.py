@@ -1,7 +1,7 @@
 from typing import List
 
-from fastapi import APIRouter, Depends, FastAPI
-
+from fastapi import APIRouter, Depends, FastAPI, Header, Request, HTTPException
+from typing import Optional
 from sqlalchemy import create_engine
 
 from .models import Book
@@ -23,7 +23,25 @@ def get_db():
         db.close()
 
 
-@books.get("/books", response_model=List[Book])
+async def verify_header(X_Web_Framework: str = Header()):
+    if X_Web_Framework != "FastAPI":
+        raise HTTPException(status_code=400, detail="Invalid Header")
+
+
+@books.middleware("http")
+async def add_header(request: Request, call_next):
+    print("Message by Middleware before operation function")
+    response = await call_next(request)
+    response.headers["X-Framework"] = "FastAPI"
+    return response
+
+
+@books.get("/")
+async def index(X_Framework: Optional[str] = Header(None)):
+    return {"message": "Hello World"}
+
+
+@books.get("/books", dependencies=[Depends(verify_header)])
 async def get_books(db: Session = Depends(get_db)):
     recs = db.query(Book).all()
     return recs
