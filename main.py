@@ -1,5 +1,6 @@
 import uvicorn
-from fastapi import FastAPI, Depends
+from fastapi import FastAPI, Depends, Request
+from fastapi.middleware.cors import CORSMiddleware
 
 import persons
 from albums import albums
@@ -11,6 +12,26 @@ app = FastAPI()
 app.mount("/albumapi", albums.albums)
 app.mount("/bookapi", books.books)
 app.mount("/personapi", persons.persons)
+origins = [
+    "http://localhost",
+    "http://127.0.0.1:8881"
+]
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+
+)
+
+
+@app.middleware("http")
+async def add_header(request: Request, call_next):
+    print("Message by Middleware before operation function")
+    response = await call_next(request)
+    response.headers["X-Framework"] = "FastAPI"
+    return response
 
 
 # app.include_router(books.books)

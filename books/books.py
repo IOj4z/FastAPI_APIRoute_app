@@ -28,12 +28,6 @@ async def verify_header(X_Web_Framework: str = Header()):
         raise HTTPException(status_code=400, detail="Invalid Header")
 
 
-@books.middleware("http")
-async def add_header(request: Request, call_next):
-    print("Message by Middleware before operation function")
-    response = await call_next(request)
-    response.headers["X-Framework"] = "FastAPI"
-    return response
 
 
 @books.get("/")
